@@ -1,3 +1,25 @@
+##### 数据类型
+
+```js
+Number Boolean String BigInt Symbol Null Undefined
+Object
+```
+
+##### 检测数据类型的方法
+
+1. 检测值类型数据 使用typeof
+2. 检测数据 Array.isArray()
+3. instanceOf
+4. Object.prototype.toString  结果格式: [object Object|Number]
+
+##### var、let、const
+
+1. var 没有块的概念，可以跨块访问，不能跨函数[函数级作用域]
+2. let 定义的变量 只能在块作用域访问，不能跨块访问，也不能跨函数访问
+3. const 定义常量， 使用时必须初始化，只能在块级租用与里访问，不能被修改
+4. var 可以在相同作用域内重复声明同一个变量，let和const不行
+5. let 和 const 存在变量提升但是有暂时性死区
+
 ##### 继承的方式
 
 1. 类式（原型链）继承
@@ -247,3 +269,5 @@
     console.log(y.getAddr())
     y.showInfo()
     ```
+
+
