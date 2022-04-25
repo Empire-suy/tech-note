@@ -8,11 +8,50 @@ Object
 ##### 检测数据类型的方法
 
 1. 检测值类型数据 使用typeof
-2. 检测数据 Array.isArray()
+2. constructor
 3. instanceOf
-4. Object.prototype.toString  结果格式: [object Object|Number]
+4. Object.prototype.toString.call  结果格式: [object Object|Number]
 
-##### var、let、const
+#### 判断数组的方式
+
+1. Object.prototype.toString.call
+2. 原型链判断 `obj.__proto__` === Array.prototype
+3. Array.isArray
+4. instanceof Array
+5. Array.prototype.isPrototypeOf(obj)
+
+#### Null 和 Undefined的区别
+
+Undefined 和 Null都是基本的数据类型，都是只有一个值，分别是undefined 和 null
+undefined 代表的含义是未定义，null代表的含义是空对象，
+
+#### new 操作符的实现原理
+
+1. 创建一个新的对象
+2. 将函数的原型指向该对象
+3. 执行构造函数的，给原型添加属性和方法
+4. 判断函数的返回值类型，如果是值类型的就返回创建的对象，如果是引用类型的，就返回引用类型的对象
+
+```js
+function objectFactory() {
+  let newObject = null
+  let constructor = Array.prototype.shift.call(arguments)
+  newObject = Object.create(constructor.prototype)
+
+  if (typeof constructor !== 'object') {
+    console.error('数据类型错误')
+    return
+  }
+
+  const result = constructor.apply(newObject, arguments)
+
+  const flag = result && (typeof result === 'object' || typeof result === 'function') ? true : false
+  return flag ? result : newObject
+}
+
+```
+
+#### var、let、const
 
 1. var 没有块的概念，可以跨块访问，不能跨函数[函数级作用域]
 2. let 定义的变量 只能在块作用域访问，不能跨块访问，也不能跨函数访问

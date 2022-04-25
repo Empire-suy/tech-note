@@ -9,11 +9,29 @@
 
 initData [初始化用户传入的data数据] => new Observer [将数据进行观测] => this.walk(value) [对对象进行处理] => defineReactive [循环对象属性定义响应式变化] => Object.defineProperty [使用Object.defineProperty重新定义数据]
 
+#### Vue2 数据劫持的原理
+
+数据劫持的核心是defineReactive函数，里面主要使用的是Object.defineProperty来对对象访问器getter和setter进行劫持，数据变更的时候set函数里面可以通知视图进行更新
+在使用Object.defineProperty进行数据劫持的时候，对象和数组是分开的:对象是遍历对象属性之后进行递归劫持的，数组是重写数组的原型方法。
+
+#### Vue2 数据劫持的缺陷
+
+1. 使用的api Object.defineProperty 实现，所以不兼容ie8以下
+2. Vue2数据劫持无法检测数组和对象的变化，只会劫持一开始存在的data选项中的数据。新增的属性或者元素可以通过Vue.$set进行绑定
+
 ##### Vue如何检测数组变化
 
 [push pop shift unshift sort splice reverse]
 vue对数组的原型方法进行了重写，使用函数劫持的方式，重写了数组的方法
 vue将data中的数组，进行了原型链重写，通过原型链指向了自己定义的数组原型方法，这样数组在调用这些api的时候，可以通知依赖更新
+
+#### Vue3 数据劫持的优势
+
+- 可以直接监听对象，Object.defineProperty 需要遍历对象属性进行监听
+- Proxy可以监听对象新增的属性和方法，Object.defineProperty 只能监听一开始存在的属性，新增的属性需要手动的Observer
+- 可以直接监听数组的变化，Object.defineProperty无法监听数组的变化
+- Proxy有多达13中拦截方法
+- Proxy返回的是一个新对象，可以只操作新对象达到目的
 
 ##### Vue为什么使用异步更新
 
@@ -96,3 +114,8 @@ setup()  onBeforeMount onMounted onBeforeUpdate onUpdated onBeforeUnmount onUnmo
 
 对数组无法实现深层次监听，因为组件每次渲染都是将data里的数据通过defineProperty进行响应式或者双向绑定，后面新添加的属性不会绑定，也就不会触发更新渲染，但是Proxy可以做到即时是后面新增加的属性也可以监听
 Proxy 配合 Reflect
+
+#### Vue3 有什么新特性
+
+Vue2 的组织代码的形式叫做Options API，而Vue3 最大的特点是Composition API，
+setup是Composition API的入口函数，是在beforeCreate声明周期函数之前执行的，还提供了ref函数定义响应式数据，reactive函数定义多个数据的响应式
