@@ -232,7 +232,7 @@ BFC是一个独立的渲染区域，规定内部box如何布局，并且这个�
   position: relative;
 }
 
-.chiold {
+.child {
   position: absolute;
   left: 50%;
   transform: translateX(-50%)
