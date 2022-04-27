@@ -283,3 +283,14 @@ BFC是一个独立的渲染区域，规定内部box如何布局，并且这个�
 ```
 
 ##### flex 布局
+
+#### 复合图层
+
+浏览器解析HTML和CSS，然后一帧一帧渲染，通过JS修改DOM后，浏览器会重新计算布局信息然后渲染，但是DOM的改变有高频低频，比如动画需要高频修改，并且可以通过硬件加速，为了综合高频和低频的计算、硬件渲染，浏览器通过渲染不同的图层，然后再进行合并显示
+
+- 根元素
+- 有 z-index 是负值的子元素
+- 有 3D 转换
+- position：fixed
+- 与其他元素可能重叠
+- will-change 样式的值为 opacity、transform、transform-style、perspective、filter、backdrop-filter 这 6 个之一

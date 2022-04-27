@@ -396,3 +396,15 @@ Promise.all(
   console.log('res => ', res)
 })
 ```
+
+#### 严格模式
+
+- 变量必须先声明再使用
+- 禁止使用with
+- eval 创建单独的作用域，但是不建议使用
+- 禁止this指向window 全局this指向undefined
+- 函数参数禁止重名 
+
+#### js修改伪元素
+
+通过给父元素绑定属性 data-href 然后指定 content: attr(href)

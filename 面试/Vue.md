@@ -126,7 +126,7 @@ setup是Composition API的入口函数，是在beforeCreate声明周期函数之
 
 #### vuex为什么同时设计mutation和action？只设计一个行不行？
 
-#### mounted拿到数据可以后可以直接获取dom吗
+#### mounted拿到数据后可以直接获取dom吗
 
 #### vue的生命周期中使用async/await是否阻塞
 
