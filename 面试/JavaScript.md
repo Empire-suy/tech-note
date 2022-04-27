@@ -309,4 +309,90 @@ function objectFactory() {
     y.showInfo()
     ```
 
+#### 迭代器
 
+```js
+const obj = {
+  name: 'emire',
+  age: 26,
+  intro: function() {
+    console.log(`My name is ${this.name}.`)
+  },
+  [Symbol.iterator]: function() {
+    let keys = Object.keys(this), index = 0
+    const _this = this
+    return {
+      next() {
+        if (index >= keys.length) {
+          return {value: undefined, done: true}
+        }
+        return {value: _this[keys[index++]], done: false}
+      }
+    }
+  }
+}
+
+for (const item of obj) {
+  console.log(item)
+}
+
+
+```
+
+#### JS里面的异步
+
+异步任务的话是指一个任务分阶段执行，先执行了一个阶段，然后继续其他的任务，当这些任务完成之后再回来继续完成剩下的任务
+
+##### 异步编程的方式
+
+- 回调函数（为了在异步中编程，回调函数不一定就是异步）
+- 事件监听（监听后进行事件的回调）
+- 发布订阅
+- Promise/A+
+  1. 三种状态 Pending Fulfilled Rejected
+  2. 支持链式调用
+  3. 每次调用都是返回一个新的Promise实例
+  4. 如果then中出现异常，那么会走下一个then的失败回调
+  5. 在then中使用了return，那么return的值会被Promise.resolve 包装
+  6. catch会捕获到没有捕获的异常
+
+- 生成器Generator/yield
+
+  第一次传参无效
+  后面使用next的时候传入参数，参数作为上一次调用的结果
+  可以使用return结束，如果return 后面后数据，则将整个数据作为最后一次返回的value值
+
+  ```js
+  function* gen() {
+    yield 1;
+    yield 2;
+    yield 3;
+  }
+
+  const g = gen()
+  console.log(g.next())
+  console.log(g.next())
+  console.log(g.next())
+  console.log(g.next())
+  ````
+
+- async/await
+
+  1. 基于Promise实现，不能用于普通函数的回调函数
+  2. 异步非阻塞
+
+#### 如果Promise.all 中有一个挂了怎么处理？
+
+传给Promise.all 之前先做处理
+
+```js
+Promise.all(
+  [
+    {code: 502, msg: '微服务异常'},
+    {code: 200, list: []},
+    {code: 200, list: []},
+  ].map(p => p.catch(e => e))
+).then(res => {
+  console.log('res => ', res)
+})
+```

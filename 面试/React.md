@@ -143,3 +143,6 @@ componentDidMount，这个生命周期是在组件已经完全挂载到网页上
 ##### redux
 
 为React提供的可预测的状态管理机制，Redux会将整个应用状态存储到一个地方，成为store，这个store里面保存一个棵状态树，组件改变state的唯一方法是通过调用store的dispatch方法，触发一个action，这个action被对应的reducer处理，于是state完成更新，组件可以派发(dispatch)行为(action)给store，而不是直接通知其他组件，其他组件可以通过订阅store中的状态更新自己的视图
+
+#### react的setState有几种方式能正确的拿到数据
+

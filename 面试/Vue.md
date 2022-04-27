@@ -59,6 +59,8 @@ initComputed => new Watcher [lazy: true, 默认 dirty: true, 默认watcher不执
 三种watcher执行顺序
 computed-watcher(监听的属性改变，当其他需要读取该属性的时候才会更新，具有lazy属性) => normal-watcher(监听的属性发生变化，会触发定义好的回调函数) => render-watcher(每个组件都有一个render-watcher data/computed属性改变的时候，调用该watcher更新视图)
 
+#### watch能监听computed的属性吗
+
 ##### Vue组件的声明周期
 
 - beforeCreate 在实例初始化之后，数据观测之前被调用
@@ -119,3 +121,15 @@ Proxy 配合 Reflect
 
 Vue2 的组织代码的形式叫做Options API，而Vue3 最大的特点是Composition API，
 setup是Composition API的入口函数，是在beforeCreate声明周期函数之前执行的，还提供了ref函数定义响应式数据，reactive函数定义多个数据的响应式
+
+#### vue模板（template）里为什么不能使用多个头结点？
+
+#### vuex为什么同时设计mutation和action？只设计一个行不行？
+
+#### mounted拿到数据可以后可以直接获取dom吗
+
+#### vue的生命周期中使用async/await是否阻塞
+
+#### 你会怎么实现监听sessionStorage发生变化触发页面更新
+
+#### vue的slot插槽一般是如何使用的
