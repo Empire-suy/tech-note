@@ -160,6 +160,39 @@ Undefined  	 undefined（唯一）
 
 规则：如果操作数1为真，那么返回操组数2，否则返回操作数3
 
+#### 相等 ==
+
+- 如果两个操作数都是对象，则仅当两个操作数都引用同一个对象时才返回`true`。
+- 如果一个操作数是`null`，另一个操作数是`undefined`，则返回`true`。
+- 如果两个操作数是不同类型的，就会尝试在比较之前将它们转换为相同类型：
+  - 当数字与字符串进行比较时，会尝试将字符串转换为数字值。
+  - 如果操作数之一是Boolean，则将布尔操作数转换为1或0。
+    - 如果是`true`，则转换为`1`。
+    - 如果是 `false`，则转换为`0`。
+  - 如果操作数之一是对象，另一个是数字或字符串，会尝试使用对象的`valueOf()`和`toString()`方法将对象转换为原始值。
+- 如果操作数具有相同的类型，则将它们进行如下比较：
+  - `String`：`true`仅当两个操作数具有相同顺序的相同字符时才返回。
+  - `Number`：`true`仅当两个操作数具有相同的值时才返回。`+0`并被`-0`视为相同的值。如果任一操作数为`NaN`，则返回`false`。
+  - `Boolean`：`true`仅当操作数为两个`true`或两个`false`时才返回`true`
+
+```js
+const arr = [];
+const testObj = {};
+console.log(arr === "");
+console.log(arr == "");
+arr.toString = () => 1;
+console.log(arr === 1);
+console.log(arr == 1);
+arr.valueOf = () => 2;
+console.log(arr == 2);
+arr.valueOf = () => testObj;
+console.log(arr == testObj);
+
+// false true false true true false
+// 数组、数字比较，当数组具有valueOf属性的时候返回valueOf的值[如果仅仅具有toString属性的时候，则返回toString的值]
+// 当且仅当数组只有一个元素的时候返回元素作为值，如果数组有多个元素的时候返回NaN
+```
+
 #### 流程控制
 
 ##### 选择结构
