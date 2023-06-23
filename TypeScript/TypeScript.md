@@ -1,5 +1,32 @@
 # TypeScript
 
+### 类型和值
+- boolean
+- number
+- string
+- T[] / Array<T>
+- [T1, T1, ...Tn]
+- any
+- void
+- null, undefined
+- never
+- object
+
+箭头函数和空对象没有key
+
+### 条件语句
+```ts
+S extends P ? T : F;
+```
+
+### 类型合并
+```ts
+type T = P | C;
+//【联合类型】如果C是P的子类型，那么可以在联合类型中将C消去
+//【交叉类型】如果C是P的子类型，那么可以在联合类型中将P消去
+
+```
+
 ### 注释
 - 单行
 - 多行
@@ -141,10 +168,51 @@ Object.create(object /** 这里使用object类型表示比any更准确 */)
 - P限制在具体的值上，P则表示具体的值
 - 如果P表示其中的一种，那么表示某种抽象的类型
 
+
+### 最佳实践
+#### 泛型函数
+- 尽可能的使用类型本身而不是约束
+```ts
+function firstElement1<Type>(arr: Type[]) {
+  return arr[0];
+}
+ 
+function firstElement2<Type extends any[]>(arr: Type) {
+  return arr[0];
+}
+ 
+// a: number (good)
+const a = firstElement1([1, 2, 3]);
+// b: any (bad)
+const b = firstElement2([1, 2, 3]);
+```
+
+- 使用更少的类型参数
+- 泛型参数最少要出现两次，否则不如直接使用类型
+
+#### 函数重载
++ 尽可能地使用函数参数的联合类型而不是函数重载
+
 ## TODO
 ```ts
+// 父类型和子类型 最返回的类型是父类型？？？
+
+
 12 as const  // 几个意思???
+
+const Three = 3 as const;
+
+
+// 怎么实现UpperCase类型
+// 只把第一个字符转换成大写 Capitalize
 ```
+
+object 和 Object的区别 
+string 和 String的区别
+Function
+
+<!-- 原型链知识回顾 -->
+
 
 2. 不同输入类型，并且返回值不同类型的函数重载怎么解决返回值的类型判断
 
