@@ -147,6 +147,39 @@ Object.create(object /** 这里使用object类型表示比any更准确 */)
 在class关键字前面添加abstract关键字, 抽象类不能被实例化
 抽象类可以继承抽象类
 
+#### 成员可见性
+
+#### protected
+```ts
+class Base {
+  protected x: number = 1;
+}
+class Derived1 extends Base {
+  protected x: number = 5;
+}
+class Derived2 extends Base {
+  f1(other: Derived2) {
+    other.x = 10;
+  }
+  f2(other: Base) {
+    other.x = 10;
+// Property 'x' is protected and only accessible through an instance of class 'Derived2'. This is an instance of class 'Base'.
+  }
+}
+```
+
+##### 跨实例 private
+```ts
+class A {
+  private x = 10;
+ 
+  public sameAs(other: A) {
+    // No error
+    return other.x === this.x;
+  }
+}
+```
+
 ### 泛型
 表示参数之间或者参数和返回值之间的一种约束，如果不需要表示这种关系则不需要声明返回值
 #### 泛型约束
@@ -167,6 +200,10 @@ Object.create(object /** 这里使用object类型表示比any更准确 */)
 - K的类型能够赋值给 string | number | symbol
 - P限制在具体的值上，P则表示具体的值
 - 如果P表示其中的一种，那么表示某种抽象的类型
+
+### 装饰器
+ts5.0版本
+[typescript 5.0 decorator](https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/#decorators)
 
 
 ### 最佳实践
@@ -193,7 +230,13 @@ const b = firstElement2([1, 2, 3]);
 #### 函数重载
 + 尽可能地使用函数参数的联合类型而不是函数重载
 
-## TODO
+### 注意
+- 不可能创建泛型枚举和泛型命名空间
+
+### 协变和逆变
+[TypeScript 中的子类型、逆变、协变是什么？](https://github.com/sl1673495/blogs/issues/54)
+
+## TODO:
 ```ts
 // 父类型和子类型 最返回的类型是父类型？？？
 
@@ -210,6 +253,72 @@ const Three = 3 as const;
 object 和 Object的区别 
 string 和 String的区别
 Function
+
+不是很能理解这些
+```ts
+type EventConfig<Events extends { kind: string }> = {
+    [E in Events as E["kind"]]: (event: E) => void;
+    // 这个写法 不是很能理解
+}
+ 
+type SquareEvent = { kind: "square", x: number, y: number };
+type CircleEvent = { kind: "circle", radius: number };
+ 
+type Config = EventConfig<SquareEvent | CircleEvent>
+```
+
+
+```ts
+interface IdLabel {
+  id: number /* some fields */;
+}
+interface NameLabel {
+  name: string /* other fields */;
+}
+
+// function createLabel(id: number): IdLabel;
+// function createLabel(name: string): NameLabel;
+// function createLabel(nameOrId: string | number): IdLabel | NameLabel;
+type V<T extends string | number> = T extends number ? IdLabel : NameLabel
+
+function createLabel<T extends string | number>(nameOrId: T): T extends number ? IdLabel : NameLabel {  
+  if (typeof nameOrId === 'string') {
+    // Type '{ name: string; }' is not assignable to type 'T extends number ? IdLabel : NameLabel'.(2322)
+    // 怎么解决这个问题
+    return {name: nameOrId}
+  }
+
+  return {id: nameOrId}
+}
+
+const a = createLabel('aaa')
+```
+
+```ts
+// 这三个结果为什么不一样
+type Aa<T> = T extends infer T1 ? T1[] : boolean
+type b = Aa<never>
+
+type Aa<T> = [T] extends infer T1 ? T1[] : boolean
+type b = Aa<never>
+
+type Aa<T> = [T] extends[ infer T1] ? T1[] : boolean
+type b = Aa<string | never>
+```
+
+```ts
+interface T {
+  history:any;
+}
+
+interface T2 {
+  name:string;
+}
+
+type Fn = (cb: T2 extends T) => void;
+// '?' expected.
+// 原因分析 extends的操作符并不适用于这个场景，适用&
+```
 
 <!-- 原型链知识回顾 -->
 
