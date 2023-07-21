@@ -1,14 +1,17 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const EslintWebpackPlugin = require('eslint-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin');
-const TerserWebpackPlugin = require('terser-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin');
+const EslintWebpackPlugin = require('eslint-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
 const path = require('path');
+
+const isProdEnv = process.env.NODE_ENV === 'production';
 
 const getStyleLoader = (pre) => {
   return [
-    MiniCssExtractPlugin.loader,
+    isProdEnv ? MiniCssExtractPlugin.loader : 'style-loader',
     'css-loader',
     {
       loader: 'postcss-loader',
@@ -23,7 +26,7 @@ const getStyleLoader = (pre) => {
 };
 
 module.exports = {
-  mode: 'production',
+  mode: isProdEnv ? 'production' : 'development',
   entry: './src/index.tsx',
   output: {
     clean: true,
@@ -31,33 +34,35 @@ module.exports = {
     chunkFilename: '[name].[contenthash:10].chunk.js',
     // 通过type: asset 形式导入的
     assetModuleFilename: 'static/media/[hash:10][ext][query]',
-    path: path.resolve(__dirname, '../dist'),
+    path: isProdEnv ? path.resolve(__dirname, './dist') : undefined,
   },
   plugins: [
-    new HtmlWebpackPlugin({ template: path.resolve(__dirname, '../public/index.html') }),
+    new HtmlWebpackPlugin({ template: path.resolve(__dirname, './public/index.html') }),
     new EslintWebpackPlugin({
-      context: path.resolve(__dirname, '../src'),
+      context: path.resolve(__dirname, './src'),
       exclude: 'node_modules',
       cache: true,
-      cacheLocation: path.resolve(__dirname, '../node_modules/.cache/eslint-webpack-plugin/.eslintcache'),
+      cacheLocation: path.resolve(__dirname, './node_modules/.cache/eslint-webpack-plugin/.eslintcache'),
     }),
-    new MiniCssExtractPlugin({
-      filename: '[name].[contenthash:10].css',
-      chunkFilename: '[name].[contenthash:10].chunk.css',
-    }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: path.resolve(__dirname, '../public/f'),
-          to: path.resolve(__dirname, '../dist/'),
-          globOptions: {
-            // TODO: 这里有问题 打包会报错
-            ignore: ['**/index.html'],
+    isProdEnv &&
+      new MiniCssExtractPlugin({
+        filename: '[name].[contenthash:10].css',
+        chunkFilename: '[name].[contenthash:10].chunk.css',
+      }),
+    isProdEnv &&
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: path.resolve(__dirname, './public'),
+            to: path.resolve(__dirname, './dist'),
+            globOptions: {
+              ignore: ['**/index.html'],
+            },
           },
-        },
-      ],
-    }),
-  ],
+        ],
+      }),
+    !isProdEnv && new ReactRefreshWebpackPlugin(),
+  ].filter(Boolean),
   module: {
     rules: [
       {
@@ -93,12 +98,12 @@ module.exports = {
           },
           {
             test: /\.[tj]sx?$/,
-            include: path.resolve(__dirname, '../src'),
+            include: path.resolve(__dirname, './src'),
             loader: 'babel-loader',
             options: {
               cacheDirectory: true,
               cacheCompression: false,
-              // js 热更无效
+              plugins: [!isProdEnv && 'react-refresh/babel'].filter(Boolean),
               presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'],
             },
           },
@@ -106,7 +111,14 @@ module.exports = {
       },
     ],
   },
-  devtool: 'source-map',
+  devtool: isProdEnv ? 'source-map' : 'cheap-module-source-map',
+  devServer: {
+    host: 'localhost',
+    hot: true,
+    port: 3000,
+    // 路由找不到的时候重定向到index.html
+    historyApiFallback: true,
+  },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.json'],
   },
@@ -134,6 +146,7 @@ module.exports = {
     runtimeChunk: {
       name: (entrypoint) => `runtime-${entrypoint.name}.js`,
     },
+    minimize: isProdEnv,
     minimizer: [new CssMinimizerWebpackPlugin(), new TerserWebpackPlugin()],
   },
   // 关闭性能分析
