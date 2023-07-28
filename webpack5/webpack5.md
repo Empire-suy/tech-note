@@ -256,8 +256,62 @@ module.exports = {
 };
 
 ```
-### 脚手架
-#### React-cli
 
+### loader
+- 分类
+  - pre 前置loader
+  - normal 普通loader
+  - inline 内联loader
+  - post 后置loader
+- 执行顺序
+  - pre > normal > inline > post
+  - 相同优先级的loader执行顺序：从右到左，从下到上
 
-#### vue-cli
+- 内联loader
+  - 使用
+  ```ts
+  import styles from 'style-loader!css-loader?modules!./style.css';
+  ```
+  - 通过配置不同的前缀跳过其他的类型的loader
+    - ! 跳过 normal loader
+    - -! 跳过pre 和 normal loader
+    - !! 跳过pre、normal、post loader
+
+## 原理
+### loader
+- 同步loader
+  ```js
+  module.exports = function (content, map, meta) {
+    this.callback(null /** 错误信息 */, content, map, meta);
+  }
+  ```
+- 异步loader
+  ```js
+  module.exports = function (content, map, meta) {
+    const callback = this.async();
+    
+    setTimeout(() => {
+      callback(null /** 错误信息 */, content, map, meta);
+    }, 1200)
+  }
+  ```
+- raw loader
+  ```js
+  module.exports = function (content, map, meta) {
+    this.callback(null /** 错误信息 */, content, map, meta);
+  }
+
+  module.exports.raw = true;
+  ```
+- pitch loader
+  ```js
+  module.exports = function (content, map, meta) {
+    this.callback(null /** 错误信息 */, content, map, meta);
+  }
+
+  // 执行顺序 从loader的左边 -> 右边
+  module.exports.pitch = function () {
+    // 如果有返回值后面的当前的loader以及后面的loader不执行
+    return ''
+  };
+  ```
