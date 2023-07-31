@@ -82,6 +82,12 @@ never // 是其他类型的子类型 ts只有一种尾端类型(也称为0类型
 ### 元组
 元组类型允许赋值给常规数据类型和只读数组类型，只读元组只能赋值给只读数组
 
+在类型里面 元组是定长的，所以可以通过修改数组的长度，最后通过获取length 属性返回长度
+```ts
+type StrToArray<S> = S extends `${infer x}${infer xs}` ? [1, ...StrToArray<xs>] : [];
+type StrLength<S extends string> = StrToArray<S>['length'];
+```
+
 ### Object
 #### Object
 Object是特殊对象[Object.prototype]的类型，该类型的主要作用是描述js中几乎所有对象都共享的属性和方法
