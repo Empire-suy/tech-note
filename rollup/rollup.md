@@ -1,30 +1,39 @@
 # rollup
 
+前置条件
+rollup 版本 v3
+
 ### 配置
+```js
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import { babel } from '@rollup/plugin-babel';
+import commonjs from '@rollup/plugin-commonjs';
+import typescript from '@rollup/plugin-typescript';
 
-#### input
-使用对象或者数组的方式
-
-format不可以使用iife，支持自动提取公共代码，amd格式不支持直接在浏览器使用
-
-#### output
-- file 输出的文件名
-- format 输入的格式
-
-### 加载NPM模块
-插件 @rollup/plugin-node-resolve
-
-### 加载CommonJS模块
-插件 @rollup/plugin-commonjs
-
-### 代码拆分
-> 在使用import动态导入的支持
-output的format不支持iife，可以使用amd
-需要指定dir属性，在输出的时候会产生多个文件
-
-#### 运行
-指定其他的配置文件名
-```shell
-rollup -c '配置文件名'
+export default {
+  input: 'src/index.ts',
+  output: [
+    {
+      file: 'lib/index.js',
+      format: 'es',
+      name: 'vec_utils',
+      sourcemap: true,
+    },
+  ],
+  plugins: [
+    typescript(), // 解析TypeScript
+    nodeResolve(), // 查找和打包node_modules中的第三方模块
+    commonjs(), // 将 CommonJS 转换成 ES2015 模块供 Rollup 处理
+    babel({ babelHelpers: 'bundled' }), // babel配置,编译es6
+  ],
+};
 ```
-
+### 需要修改package.json
+```json
+{
+  "name": "@scope/pkg",
+  "main": "", // commonjs 打包模式
+  "module": "", // es 打包模式
+  "types": "声明文件的入口",
+}
+```
