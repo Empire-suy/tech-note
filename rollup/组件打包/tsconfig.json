@@ -15,7 +15,7 @@
   "skipLibCheck": true,
   "declaration": true,
   "module": "ES2015",
-  "declarationDir": "types",
+  "declarationDir": "dist/types",
   "emitDeclarationOnly": true
 },
 "include": [

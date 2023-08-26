@@ -1,15 +1,16 @@
 {
   "name": "@private/package-name",
   "version": "1.0.0",
-  "description": "",
-  "module": "dist/index.js",
-  "types": "types/index.d.ts",
+  "description": "commonly used react components",
+  "main": "dist/umd/index.js",
+  "module": "dist/es/index.js",
+  "types": "dist/types/index.d.ts",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -fr dist && set NODE_ENV=production&& rollup -c rollup.config.js",
+    "build": "rm -fr dist && set NODE_ENV=production && rollup -c rollup.config.js && npm run generate:type",
     "prepublishOnly": "npm run build",
-    "type": "tsc"
+    "generate:type": "tsc"
   },
   "files": [
     "dist"
