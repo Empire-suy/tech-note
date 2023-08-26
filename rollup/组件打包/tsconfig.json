@@ -1,0 +1,26 @@
+{"compilerOptions": {
+  "sourceMap": false,
+  "allowJs": false,
+  "target": "es5",
+  "lib": ["es2015", "dom", "es5", "es2016", "es2017"],
+  "jsx": "react",
+  "moduleResolution": "node",
+  "strictNullChecks": false,
+  "noImplicitAny": false,
+  "noImplicitReturns": true,
+  "noImplicitThis": true,
+  "experimentalDecorators": true,
+  "emitDecoratorMetadata": true,
+  "allowSyntheticDefaultImports": true,
+  "skipLibCheck": true,
+  "declaration": true,
+  "module": "ES2015",
+  "declarationDir": "types",
+  "emitDeclarationOnly": true
+},
+"include": [
+  "src",
+  "globals.d.ts"
+],
+"exclude": ["node_modules", "*.js", "dist"]
+}
