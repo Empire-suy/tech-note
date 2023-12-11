@@ -110,3 +110,19 @@ eg: [个人答案](https://github.com/type-challenges/type-challenges/issues/4)
 <!-- 还没看到的文章 -->
 [What is an uninhabited type?](https://cs.stackexchange.com/questions/134215/what-is-an-uninhabited-type)
 [Reduce intersections by discriminants](https://github.com/microsoft/TypeScript/pull/36696)
+
+
+type KebabCase<S, H extends number[] = []> = S extends `${infer F}${infer R}`
+                                                ? F extends Lowercase<F>
+                                                  ? `${F}${KebabCase<R, [1]>}`
+                                                  : H['length'] extends 0
+                                                    ? `${Lowercase<F>}${KebabCase<R, [1]>}`
+                                                    : `-${Lowercase<F>}${KebabCase<R, [1]>}`
+                                                : S;
+
+// type KebabCase<S> = S extends `${infer F}${infer R}`
+//                       ? `${Uncapitalize<F>}${R extends Uncapitalize<R> ? KebabCase<R> : `-${KebabCase<R>}`}`
+//                       : S;
+
+
+https://github.com/type-challenges/type-challenges/issues/28340
