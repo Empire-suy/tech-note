@@ -1,7 +1,10 @@
-// @ts-nocheck
+type ListNode<T> = {
+  next: ListNode<T> | null;
+  value: T | null;
+};
 
 class List<T> {
-  head;
+  head: ListNode<T> & { size: number };
 
   constructor() {
     this.head = {
@@ -11,45 +14,39 @@ class List<T> {
     };
   }
 
-  forEach = (cb: (ele: T, index: number) => void) => {
-    let nextEle = this.head.next;
-    let index = 0;
-
-    while (nextEle) {
-      cb(nextEle, index);
-      nextEle = nextEle.next;
-      index++;
-    }
+  updateSize = (diff = 1) => {
+    this.head.size += diff;
   };
 
   push = (ele: T) => {
-    let nextEle = this.head.next;
-    let prevEle = this.head;
-
-    while (nextEle) {
-      prevEle = nextEle;
-      nextEle = nextEle.next;
-    }
-
-    if (!nextEle) {
-      prevEle.next = {
-        next: null,
-        value: ele,
-      };
-      this.head.size++;
-    }
+    return this.insert(ele, this.head.size);
   };
 
   insert = (ele: T, index: number) => {
     let nextEle = this.head.next;
-    let prevEle = this.head;
+    let prevEle: ListNode<T> = this.head;
     let idx = 0;
+    let addToTail = false;
 
-    // TODO: 这里需要考虑一些边界值
+    if (index === this.head.size) {
+      addToTail = true;
+    }
+
+    if (!nextEle) {
+      this.head.next = {
+        next: null,
+        value: ele,
+      };
+      this.updateSize();
+      return this;
+    }
+
     while (nextEle) {
       if (idx === index) {
         const node = { next: nextEle.next, value: ele };
-        prevEle.next = node;
+        nextEle.next = node;
+        this.updateSize();
+        return this;
       }
 
       idx++;
@@ -57,28 +54,82 @@ class List<T> {
       nextEle = nextEle.next;
     }
 
+    if (addToTail) {
+      prevEle.next = {
+        next: null,
+        value: ele,
+      };
+      this.updateSize();
+    }
+
     return this;
   };
 
-  remove = (ele) => {};
+  private removeExecutor = (iteratee: (node: { index: number; value: T | null }) => boolean) => {
+    let nextEle = this.head.next;
+    let prevEle: ListNode<T> = this.head;
+    let index = 0;
 
-  removeAt = (index) => {};
+    if (!this.head.size || !nextEle) {
+      return this;
+    }
 
-  getNodeAt = (index) => {};
+    while (nextEle) {
+      if (iteratee({ index, value: nextEle.value })) {
+        prevEle.next = nextEle.next;
+        this.updateSize(-1);
+        return this;
+      }
 
-  getIndexOf = (ele) => {};
+      prevEle = nextEle;
+      nextEle = nextEle.next;
+      index += 1;
+    }
+
+    return this;
+  };
+
+  remove = (ele: T) => {
+    return this.removeExecutor((node) => node.value === ele);
+  };
+
+  removeAt = (index: number) => {
+    return this.removeExecutor((node) => node.index === index);
+  };
+
+  private getNode = (iteratee: (node: { index: number; value: T | null }) => boolean) => {
+    let nextEle = this.head.next;
+    let index = 0;
+
+    while (nextEle) {
+      if (iteratee({ value: nextEle.value, index })) {
+        return nextEle.value;
+      }
+
+      index += 1;
+      nextEle = nextEle.next;
+    }
+
+    return null;
+  };
+
+  getNodeAt = (index: number) => {
+    return this.getNode((node) => node.index === index);
+  };
+
+  getIndexOf = (ele: T) => {
+    return this.getNode((node) => node.value === ele);
+  };
 
   getHead = () => {
     return this.head;
+  };
+
+  isEmpty = () => {
+    return !this.head.size;
   };
 
   get size() {
     return this.head.size;
   }
 }
-
-const list = new List<number>();
-// list.push(2);
-// list.push(3);
-list.push(6);
-console.log('size', list.size);
