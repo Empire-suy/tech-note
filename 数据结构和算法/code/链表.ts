@@ -129,6 +129,12 @@ class List<T> {
     return !this.head.size;
   };
 
+  clear = () => {
+    this.head.next = null;
+    this.head.size = 0;
+    return this;
+  };
+
   get size() {
     return this.head.size;
   }
