@@ -30,6 +30,10 @@ I/O  setTimeout  setInterval  setImmediate[node]   requestAnimationFrame
 process.nextTick[node]  MutationObserver  Promise.then  catch  finally
 ```
 
+js先执行同步任务，遇到微任务将微任务压入微任务队列，遇到宏任务会将宏任务压入到宏任务队列中，当宏任务执行完毕的时候会把当前微任务队列里面的任务执行完毕，当所有的
+微任务都执行完了，就接着执行下一个宏任务，期间执行的逻辑也是一样的，先执行同步任务，然后将微任务压入队列，然后执行当前的微任务，当微任务执行完之后再执行下一个宏任务
+一次往复循环
+
 ##### 数据转换
 
 ```js
