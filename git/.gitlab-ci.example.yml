@@ -1,0 +1,73 @@
+# image: cjie.eu.org/node:latest
+
+variables:
+  DOCKER_VOLUME_PATH: /builds/react-demo
+  PROD_PATH: /etc/var/www/react-demo
+
+stages:
+  - install
+  - build
+  - deploy
+
+dev:install:
+  stage: install
+  image:
+    - name: cjie.eu.org/node:18
+  before_script:
+    - node -v
+    - npm -v
+  script:
+    - npm install
+    - echo "npm run install finished."
+  artifacts:
+    paths:
+      - node_modules/
+
+dev:build:
+  stage: build
+  image:
+    - name: cjie.eu.org/node:18
+    - pull_policy: [if-not-present, always]
+  script:
+    - npm run build
+  after_script:
+    - mkdir -p $DOCKER_VOLUME_PATH
+    - cp -r ./build/* $DOCKER_VOLUME_PATH/
+    - ls -la ./build
+    - ls -la $DOCKER_VOLUME_PATH/
+  dependencies:
+    - dev:install
+  artifacts:
+    paths:
+      - build/
+  needs:
+    - job: dev:install
+      artifacts: true
+
+dev:deploy:
+  stage: deploy
+  image:
+    name: cjie.eu.org/node:latest
+    pull_policy: [if-not-present, always]
+  before_script:
+    - cat /etc/os-release
+    - |
+      bash -c "cat > /etc/apt/sources.list << EOF
+      deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm main contrib non-free non-free-firmware
+      deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm main contrib non-free non-free-firmware
+
+      deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware
+      deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware
+
+      deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm-backports main contrib non-free non-free-firmware
+      deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm-backports main contrib non-free non-free-firmware
+
+      deb https://mirrors.tuna.tsinghua.edu.cn/debian-security/ bookworm-security main contrib non-free non-free-firmware
+      deb-src https://mirrors.tuna.tsinghua.edu.cn/debian-security/ bookworm-security main contrib non-free non-free-firmware
+      EOF"
+    - apt-get update -y && apt-get install -y rsync
+  script:
+    - cat /etc/os-release
+    - ls -la $DOCKER_VOLUME_PATH/
+    - mkdir -p $PROD_PATH/
+    - rsync -avz --delete $DOCKER_VOLUME_PATH/ $PROD_PATH/

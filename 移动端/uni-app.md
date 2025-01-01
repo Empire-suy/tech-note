@@ -14,4 +14,3 @@
     ctx.$refs.ref.open();
   }
   ```
-5. 
