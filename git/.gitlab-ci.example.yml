@@ -12,7 +12,8 @@ stages:
 dev:install:
   stage: install
   image:
-    - name: cjie.eu.org/node:18
+    name: cjie.eu.org/node:18
+    pull_policy: [if-not-present, always]
   before_script:
     - node -v
     - npm -v
@@ -26,8 +27,8 @@ dev:install:
 dev:build:
   stage: build
   image:
-    - name: cjie.eu.org/node:18
-    - pull_policy: [if-not-present, always]
+    name: cjie.eu.org/node:18
+    pull_policy: [if-not-present, always]
   script:
     - npm run build
   after_script:
