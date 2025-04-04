@@ -25,3 +25,9 @@ npm publish --registry http://localhost:4873/
 
 npm unpublish --registry http://localhost:4873/
 ```
+
+### node 版本管理工具
+#### fnm
+
+保存数据的位置`C:\Users\Empire-suy\AppData\Roaming\fnm`
+
