@@ -1,4 +1,0 @@
-tcp
-udp
-http1.0 1.1 2.0 3.0
-websocket
