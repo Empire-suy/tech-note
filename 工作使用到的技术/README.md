@@ -23,6 +23,8 @@
 #### 虚拟化
 
 - @rc-component/virtual-list
+  - 优点：简单易用
+  - 缺点：容器的高度需要固定，对需要自适应高度不是很友好
 - rc-virtual-list
 - react-window
 - react-virtualized
